@@ -107,7 +107,7 @@ void setup() {
   // ADJUST THIS ORIENTATION!!!!
   x = -lis.z;  // Takes the x-axis reading, using a negated z-axis accelerometer reading
   y = -lis.x;   // Takes the y-axis reading, using a negated x-axis accelerometer reading
-  z = -lis.y;  // Takes the z-axis reading, using a negated y-axis accelerometer reading
+  z = lis.y;  // Takes the z-axis reading, using a negated y-axis accelerometer reading
 
 
 
@@ -150,9 +150,8 @@ void setup() {
   z = 0;
 
   // // Procedure at device start-up
-  // String startTime = RTC();  //timestamp
+  String startTime = RTC();  //timestamp
 
-  String startTime = "";
 
   file = SD.open("/accelerationdata.txt", FILE_APPEND);  //open file.txt to write data
   if (!file) {                                           // If the file cannot be opened, follow this condition
@@ -177,9 +176,6 @@ void loop() {
 
   // Gets the battery percent
   battery_percent = battery.getSOC();
-  
-
-
 
   /*
    * Condition 1: Idle Mode Check
@@ -230,16 +226,18 @@ void loop() {
 // Accelerometer: Uses a delta scheme to detect movement
 void motionDetection() {
   accelRead();        // Takes 50 accelerometer readings and averages them
-  Serial.println("Reading");
+  
 
   Write("X: ");
   Write(String(x, 2));
   Write("Y: ");
   Write(String(y, 2));
+
   
+  Serial.println("Reading");
   Serial.println(x);
   Serial.println(y);
-  Serial.println(z);
+  // Serial.println(z);
   // Threshold of change in each axis to be considered a detected movement
   float move_tholdX = 0.1;
   float move_tholdY = 0.1;
@@ -327,8 +325,8 @@ void accelRead() {
     lis.getEvent(&event);  // Grabs the specific accelerometer data
 
     x_sum += (-event.acceleration.z);  // Adds this specific x-axis instance to the sum, using the negated z-axis accelerometer data
-    y_sum += event.acceleration.y;     // Adds this specific y-axis instance to the sum
-    z_sum += (-event.acceleration.x);  // Adds this specific z-axis instance to the sum, using the negated x-axis accelerometer data
+    y_sum += (-event.acceleration.x);     // Adds this specific y-axis instance to the sum
+    z_sum += event.acceleration.y;  // Adds this specific z-axis instance to the sum, using the negated x-axis accelerometer data
     delay(2);                          // Delays for 2 milliseconds
   }
 
