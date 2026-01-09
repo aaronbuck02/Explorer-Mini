@@ -83,11 +83,18 @@ void setup() {
   }
   Serial.println(F("RTC online!"));  // Prints to the serial monitor that the RTC was found
 
-  if (rtc.setToCompilerTime() == false) {
+  if (rtc.setToCompilerTime() == false) { // Check this logic tomorrow?
     Serial.println(F("An error has occurred in setting the RTC to compiler time"));
   }
 
+  // Try to maunally reset time? 
+  // rtc.setTime(sec, minute, hour, weekday, date, month, year)
+
+
+
   rtc.setEVIEventCapture(RV8803_ENABLE);  //Enables the Timestamping function
+
+  
 
   Serial.println(F("LIS3DH test!"));
   if (!lis.begin(0x19)) {                // If the LIS3DH accelerometer cannot be found or used, follow this condition
@@ -107,7 +114,7 @@ void setup() {
   // ADJUST THIS ORIENTATION!!!!
   x = -lis.z;  // Takes the x-axis reading, using a negated z-axis accelerometer reading
   y = -lis.x;   // Takes the y-axis reading, using a negated x-axis accelerometer reading
-  z = lis.y;  // Takes the z-axis reading, using a negated y-axis accelerometer reading
+  z =  lis.y;  // Takes the z-axis reading, using a negated y-axis accelerometer reading
 
 
 
@@ -184,7 +191,7 @@ void loop() {
   */
 
   if (current_time - stop_motion > 30000) {
-    setColor(255, 30, 0);                            // Sets the color to "orange-ish"
+    setColor(255, 0, 100);                            // Sets the color to "orange-ish" //color is PINK
     lis.setDataRate(LIS3DH_DATARATE_LOWPOWER_5KHZ);  // Sets the accelerometer to low-power mode
     motionDetection();                             // Resumes motion detection
   }
@@ -212,7 +219,7 @@ void loop() {
   */
 
   else {
-    setColor(0, 255, 0);                     // Sets the LED color to green
+    setColor(0, 0, 255);                     // Sets the LED color to green //Color is Blue
     lis.setDataRate(LIS3DH_DATARATE_10_HZ);  // Sets the accelerometer to normal data collection
     motionDetection();                       // Runs the motion detection
   }
@@ -232,6 +239,8 @@ void motionDetection() {
   Write(String(x, 2));
   Write("Y: ");
   Write(String(y, 2));
+  Write("Z: ");
+  Write(String(Z, 2));
 
   
   Serial.println("Reading");
@@ -244,7 +253,7 @@ void motionDetection() {
   float move_tholdZ = 0.1;
 
   // If there is a significant change in all three axes, create a timestampe to record to SD card, and indicate the start of a new motion
-  if (abs(last_x - x) > move_tholdX && abs(last_y - y) > move_tholdY && abs(last_z - z) > move_tholdZ && det == false) {
+  if (abs(last_x - x) > move_tholdX && abs(last_y - y) > move_tholdZ && abs(last_z - z) > move_tholdZ && det == false) {
     digitalWrite(EVI, HIGH);    // trigger EVI pin
     delay(20);                  // wait for a second
     digitalWrite(EVI, LOW);     // turn off EVI pin output
@@ -255,12 +264,12 @@ void motionDetection() {
   }
 
   // If there is no longer significant change in all three axes add to the detection counter
-  else if (move_tholdX > abs(last_x - x) && move_tholdY > abs(last_y - y) && move_tholdY > abs(last_z - z) && detect < 3 && det == true) {
+  else if (move_tholdX > abs(last_x - x) && move_tholdY > abs(last_y - y) && move_tholdZ > abs(last_z - z) && detect < 3 && det == true) {
     detect += 1;
   }
 
   // If after 300ms there is no more significant change, the time of stopped motion will be printed to the SD card
-  else if (move_tholdX > abs(last_x - x) && move_tholdY > abs(last_y - y) && move_tholdY > abs(last_z - z) && detect == 3 && det == true) {
+  else if (move_tholdX > abs(last_x - x) && move_tholdY > abs(last_y - y) && move_tholdZ > abs(last_z - z) && detect == 3 && det == true) {
     digitalWrite(EVI, HIGH);   // trigger EVI pin
     delay(20);                 // wait for a second
     digitalWrite(EVI, LOW);    // turn off EVI pin output
