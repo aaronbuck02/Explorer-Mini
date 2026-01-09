@@ -252,7 +252,7 @@ void loop() {
   */
 
   else {
-    setColor(0, 255, 0);                     // Sets the LED color to green
+    setColor(0, 0, 255);                     // Sets the LED color to green
     lis.setDataRate(LIS3DH_DATARATE_10_HZ);  // Sets the accelerometer to normal data collection
     motionDetection();                       // Runs the motion detection
     // Serial.print("Green:");
