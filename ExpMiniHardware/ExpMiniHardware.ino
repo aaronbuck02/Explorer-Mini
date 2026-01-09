@@ -114,7 +114,7 @@ void setup() {
   // ADJUST THIS ORIENTATION!!!!
   x = -lis.z;  // Takes the x-axis reading, using a negated z-axis accelerometer reading
   y = -lis.x;   // Takes the y-axis reading, using a negated x-axis accelerometer reading
-  z =  lis.y;  // Takes the z-axis reading, using a negated y-axis accelerometer reading
+  z = -lis.y;  // Takes the z-axis reading, using a negated y-axis accelerometer reading
 
 
 
